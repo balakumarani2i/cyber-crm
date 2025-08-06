@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
+const API_BASE_URL = 'https://cyber-crm-service.onrender.com/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

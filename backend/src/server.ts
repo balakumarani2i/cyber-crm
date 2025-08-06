@@ -10,7 +10,15 @@ import { errorHandler } from './middleware/errorHandler';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://cyber-crm-pi.vercel.app',
+    'https://your-custom-domain.com'
+  ],
+  credentials: true
+}));
+app.use(cors({
+}));
 app.use(express.json({ limit: '10mb' }));
 
 app.use('/api/auth', authRoutes);
