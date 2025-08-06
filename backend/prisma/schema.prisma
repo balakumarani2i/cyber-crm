@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("SALES")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  customers    Customer[]
+  interactions Interaction[]
+  deals        Deal[]
+  tasks        Task[]
+
+  @@map("users")
+}
+
+model Customer {
+  id         String   @id @default(cuid())
+  name       String
+  email      String?  @unique
+  phone      String?
+  company    String?
+  address    String?
+  status     String   @default("PROSPECT")
+  assignedTo String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  assignedUser User?         @relation(fields: [assignedTo], references: [id])
+  interactions Interaction[]
+  deals        Deal[]
+  tasks        Task[]
+
+  @@map("customers")
+}
+
+model Interaction {
+  id          String   @id @default(cuid())
+  customerId  String
+  userId      String
+  type        String
+  subject     String
+  description String?
+  date        DateTime
+  createdAt   DateTime @default(now())
+
+  // Relations
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@map("interactions")
+}
+
+model Deal {
+  id                String    @id @default(cuid())
+  customerId        String
+  title             String
+  value             Float?
+  stage             String    @default("LEAD")
+  probability       Int       @default(0)
+  expectedCloseDate DateTime?
+  assignedTo        String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  customer     Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  assignedUser User?    @relation(fields: [assignedTo], references: [id])
+  tasks        Task[]
+
+  @@map("deals")
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime?
+  priority    String    @default("MEDIUM")
+  status      String    @default("PENDING")
+  assignedTo  String
+  customerId  String?
+  dealId      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  assignedUser User      @relation(fields: [assignedTo], references: [id])
+  customer     Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  deal         Deal?     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@map("tasks")
+}
