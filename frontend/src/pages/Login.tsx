@@ -132,7 +132,7 @@ export default function Login() {
             <div className="font-bold mb-2">🧪 DEMO ACCESS CODES</div>
             <div className="space-y-1">
               <div>Neural ID: <span className="font-mono">admin@crm.com</span></div>
-              <div>Access Code: <span className="font-mono">admin123</span></div>
+              <div>Access Code: <span className="font-mono">test@123</span></div>
             </div>
           </div>
         </form>
